@@ -68,6 +68,32 @@ acce1.loc[acce1["X_filter_abs"] < 0.0015, 'X_velocity'] = 0
 acce1.loc[acce1["Y_filter_abs"] < 0.0015, 'Y_velocity'] = 0
 acce1.loc[acce1["Z_filter_abs"] < 0.0015, 'Z_velocity'] = 0
 
+lp_X = []
+for index, value in acce1["X_velocity"].iteritems():
+    if value != 0:
+        lp_X.append(index)
+
+# print(lp_X)
+lpn_X = []
+lkn_X = []
+for index, value in enumerate(lp_X):
+    if value != lp_X[-1]:
+        if value+1 != lp_X[index+1]:
+            lkn_X.append(value)
+        if value-1 != lp_X[index-1]:
+            lpn_X.append(value)
+    else:
+        lkn_X.append(value)
+print("LPN_X: ")
+print(lpn_X)
+print("LKN_X: ")
+print(lkn_X)
+for index, begin in enumerate(lpn_X):
+    if index !=0:
+        acce1["X_velocity"][lkn_X[index-1]:lpn_X[index]]  = acce1["X_velocity"][lkn_X[index-1]]
+
+
+
 # print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
 # Y_velocity
@@ -75,6 +101,8 @@ original_lpn_Y = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
 original_lkn_Y = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
 print(original_lkn_Y)
 print(original_lpn_Y)
+
+
 
 lp_Y = []
 for index, value in acce1["Y_velocity"].iteritems():
@@ -102,10 +130,6 @@ for index, begin in enumerate(lpn_Y):
     if index !=0:
         acce1["Y_velocity"][begin-1:lkn_Y[index]] = acce1["Y_velocity"][begin-1:lkn_Y[index]] + (abs(acce1["Y_velocity"][lpn_Y[index]]) - abs(acce1["Y_velocity"][lkn_Y[index-1]]) )
         acce1["Y_velocity"][lkn_Y[index-1]:lpn_Y[index]]  = acce1["Y_velocity"][lkn_Y[index-1]]
-
-    
-
-
 
 
 lp_Z = []
