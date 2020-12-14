@@ -30,7 +30,7 @@ sampling_freq = 1 / acce1["SAMPLING_TIME"].mean()
 
 order=5
 
-cutoff_freq = sampling_freq / 800
+cutoff_freq = sampling_freq / 1400
 
 # number_of_samples = len(acce1)
 
@@ -132,7 +132,7 @@ for index, begin in enumerate(lpn_Y):
 lp_Z = []
 for index, value in acce1["Z_velocity"].iteritems():
     if value != 0:
-        lp_Z.append(index)
+        lp_Z.append(index)      
 
 # print(lp_Z)
 lpn_Z = []
