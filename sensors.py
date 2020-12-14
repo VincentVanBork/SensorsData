@@ -1,4 +1,3 @@
-from typing import final
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -31,11 +30,11 @@ sampling_freq = 1 / acce1["SAMPLING_TIME"].mean()
 
 order=5
 
-cutoff_freq = sampling_freq / 1400
+cutoff_freq = sampling_freq / 800
 
-number_of_samples = len(acce1)
+# number_of_samples = len(acce1)
 
-time = np.linspace(0, acce1["SAMPLING_TIME"].mean(), number_of_samples, endpoint=False)
+# time = np.linspace(0, acce1["SAMPLING_TIME"].mean(), number_of_samples, endpoint=False)
 
 normalized_cutoff_freq = 2 * cutoff_freq / sampling_freq
 #prepare filter
@@ -55,9 +54,9 @@ acce1["Z_filter_abs"] = acce1["Z_filter"].abs()
 
 high_numerator_coeffs, high_denominator_coeffs = signal.butter(order, normalized_cutoff_freq,btype="highpass")
 
-acce1["X_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["X_filter_abs"])
-acce1["Y_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_filter_abs"])
-acce1["Z_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_filter_abs"])
+# acce1["X_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["X_filter_abs"])
+# acce1["Y_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_filter_abs"])
+# acce1["Z_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_filter_abs"])
 
 
 acce1["X_velocity"] = integrate.cumtrapz(acce1["X_filter"], x=acce1["TIME"], initial=0)
@@ -91,8 +90,6 @@ print(lkn_X)
 for index, begin in enumerate(lpn_X):
     if index !=0:
         acce1["X_velocity"][lkn_X[index-1]:lpn_X[index]]  = acce1["X_velocity"][lkn_X[index-1]]
-
-
 
 # print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
@@ -203,8 +200,8 @@ sns.lineplot(y=acce1["Z_velocity"], x=acce1["TIME"], label="Z")
 
 
 acce1["X_POSITION"] = integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0)
-acce1["Y_POSITION"]=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0)
-acce1["Z_POSITION"]=integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0)
+acce1["Y_POSITION"]= integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0)
+acce1["Z_POSITION"]= integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0)
 
 plt.figure()
 plt.title("POSITION X,Y,Z")
