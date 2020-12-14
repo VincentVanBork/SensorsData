@@ -25,18 +25,18 @@ def create_graphs(names, data):
     if "raw_vs_filter" in names:
         plt.figure()
         plt.title("RAW DATA vs filtered")
-        sns.lineplot(y=data["X"], x=data["TIME"], label="X")
-        sns.lineplot(y=data["X_filter"], x=data["TIME"], label="X")
+        sns.lineplot(y=data["X"]/data["X"].abs().max(), x=data["TIME"], label="X")
+        sns.lineplot(y=data["X_filter"]/data["X_filter"].abs().max(), x=data["TIME"], label="X_FILTERED")
 
         plt.figure()
         plt.title("RAW DATA vs filtered")
-        sns.lineplot(y=data["Y"], x=data["TIME"], label="Y")
-        sns.lineplot(y=data["Y_filter"], x=data["TIME"], label="Y")
+        sns.lineplot(y=data["Y"]/data["Y"].abs().max(), x=data["TIME"], label="Y")
+        sns.lineplot(y=data["Y_filter"]/data["Y_filter"].abs().max(), x=data["TIME"], label="Y_FILTERED")
 
         plt.figure()
         plt.title("RAW DATA vs filtered")
-        sns.lineplot(y=data["Z"], x=data["TIME"], label="Z")
-        sns.lineplot(y=data["Z_filter"], x=data["TIME"], label="Z")
+        sns.lineplot(y=data["Z"]/data["Z"].abs().max(), x=data["TIME"], label="Z")
+        sns.lineplot(y=data["Z_filter"]/data["Z_filter"].abs().max(), x=data["TIME"], label="Z_FILTERED")
 
     if "position" in names:
         # print(data.head())
