@@ -70,12 +70,12 @@ print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
 # lista_poczatek_zer = [0, 4141, 5352, 6433, 7307, 8137, 8886]\
 # Y_velocity
-lpn = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
-lkn = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
+lpn_Y = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
+lkn_Y = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
 
-for index, begin in enumerate(lpn):
+for index, begin in enumerate(lpn_Y):
     if index !=0:
-        acce1["Y_velocity"][begin-1:lkn[index]] = acce1["Y_velocity"][begin-1:lkn[index]] + (abs(acce1["Y_velocity"][lpn[index]]) - abs(acce1["Y_velocity"][lkn[index-1]]) )
+        acce1["Y_velocity"][begin-1:lkn_Y[index]] = acce1["Y_velocity"][begin-1:lkn_Y[index]] + (abs(acce1["Y_velocity"][lpn_Y[index]]) - abs(acce1["Y_velocity"][lkn_Y[index-1]]) )
 
 lp_Z = []
 
