@@ -70,14 +70,43 @@ acce1.loc[acce1["Z_filter_abs"] < 0.0015, 'Z_velocity'] = 0
 
 # print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
-
 # Y_velocity
-lpn_Y = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
-lkn_Y = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
+original_lpn_Y = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
+original_lkn_Y = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
+print(original_lkn_Y)
+print(original_lpn_Y)
+
+lp_Y = []
+for index, value in acce1["Y_velocity"].iteritems():
+    if value != 0:
+        lp_Y.append(index)
+# print(lp_Y)
+lpn_Y = []
+lkn_Y = []
+for index, value in enumerate(lp_Y):
+    if value != lp_Y[-1]:
+        if value+1 != lp_Y[index+1]:
+            lkn_Y.append(value)
+        if value-1 != lp_Y[index-1]:
+            lpn_Y.append(value)
+    else:
+        lkn_Y.append(value)
+
+print("LPN_Y: ")
+print(lpn_Y)
+print("LKN_Y: ")
+print(lkn_Y)
+
 
 for index, begin in enumerate(lpn_Y):
     if index !=0:
         acce1["Y_velocity"][begin-1:lkn_Y[index]] = acce1["Y_velocity"][begin-1:lkn_Y[index]] + (abs(acce1["Y_velocity"][lpn_Y[index]]) - abs(acce1["Y_velocity"][lkn_Y[index-1]]) )
+        acce1["Y_velocity"][:lpn_Y[index]] 
+
+    
+
+
+
 
 lp_Z = []
 for index, value in acce1["Z_velocity"].iteritems():
@@ -95,8 +124,9 @@ for index, value in enumerate(lp_Z):
             lpn_Z.append(value)
     else:
         lkn_Z.append(value)
-
+print("LPN_Z: ")
 print(lpn_Z)
+print("LKN_Z: ")
 print(lkn_Z)
 
 acce1["Z_velocity"][lpn_Z[1]-1:lkn_Z[1]] = acce1["Z_velocity"][lpn_Z[1]-1:lkn_Z[1]] - (acce1["Z_velocity"][lpn_Z[1]] - acce1["Z_velocity"][lkn_Z[0]])
@@ -144,10 +174,14 @@ sns.lineplot(y=acce1["Z_velocity"], x=acce1["TIME"], label="Z")
 # acce1["Y_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_velocity"])
 
 # acce1["Z_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_velocity"])
+acce1["X_POSITION"] = integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0)
+acce1["Y_POSITION"]=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0)
+acce1["Z_POSITION"]=integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0)
 
 plt.figure()
 plt.title("POSITION X,Y,Z")
-sns.lineplot(y=integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"], label="X")
-sns.lineplot(y=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"], label="Y")
-sns.lineplot(y=integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0), x=acce1["TIME"],label="Z")
+sns.lineplot(y=acce1["X_POSITION"], x=acce1["TIME"], label="X")
+sns.lineplot(y=acce1["Y_POSITION"], x=acce1["TIME"], label="Y")
+sns.lineplot(y=acce1["Z_POSITION"], x=acce1["TIME"],label="Z")
+
 plt.show()
