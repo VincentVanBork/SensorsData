@@ -77,21 +77,22 @@ def all_vel_indicies(df):
     # for index, value in df["Z_velocity"].iteritems():
     #     if value != 0:
     #         lp_Z.append(index)
-    
-    return lp_X, lp_Y, lp_Z
+    return lp_X.index.tolist(), lp_Y.index.tolist(), lp_Z.index.tolist()
 
 
 def find_vel_borders(velocity_indicies):
     lpn = []
     lkn = []
-    for index, value in velocity_indicies.iteritems():
+    for index, value in enumerate(velocity_indicies):
         if value != velocity_indicies[-1]:
             if value+1 != velocity_indicies[index+1]:
                 lkn.append(value)
             if value-1 != velocity_indicies[index-1]:
                 lpn.append(value)
         else:
+            # if len(lpn) != len(lkn):
             lkn.append(value)
+        
     print("LPN: ")
     print(lpn)
     print("LKN: ")
@@ -105,5 +106,5 @@ def set_equal_velocity(df, begin_range_vel, end_range_vel, velocity_name):
         drift_difference = abs(abs(df[velocity_name][begin_range_vel[index]]) - abs(df[velocity_name][end_range_vel[index-1]]))
 
         if index !=0:
-            df[velocity_name][begin-1:end_range_vel[index]].apply(lambda x: x + drift_difference if x > 0 else x - drift_difference)
+            df[velocity_name][begin-1:end_range_vel[index]]= df[velocity_name][begin-1:end_range_vel[index]].apply(lambda x: x + drift_difference if x < 0 else x - drift_difference)
             df[velocity_name][end_range_vel[index-1]:begin_range_vel[index]]  = df[velocity_name][end_range_vel[index-1]]
