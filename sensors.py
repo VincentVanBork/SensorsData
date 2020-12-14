@@ -68,65 +68,36 @@ acce1.loc[acce1["Z_filter_abs"] < 0.0015, 'Z_velocity'] = 0
 
 print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
-# last_velocity = 0
-# index_last_velocity = 0
-# velocity_count = 0
-# final_velocity = 0
-# index_final_velocity=0
-# zeroth_count = 0
-
-# for index, vel in acce1["Y_velocity"].items():
-    
-#     if vel != 0:
-#         f = open("zeroths.txt", "a")
-#         f.write("not zero count" + " " + str(index)+"\n")
-#         f.close()
-
-#         if last_velocity != 0:
-#             if acce1["Y_velocity"][1+index_last_velocity] == 0:
-#                 final_velocity = vel
-#                 index_final_velocity = index
-#                 difference = abs(final_velocity) - abs(last_velocity)
-#                 if final_velocity < 0:
-#                     final_velocity += difference
-#                 else:
-#                     final_velocity -= difference
-
-#                 acce1["Y_velocity"][index] = final_velocity
-#                 index_last_velocity = 0
-#                 last_velocity = 0
-#                 velocity_count = 0
-#                 final_velocity = 0
-#                 index_final_velocity=0
-#                 zeroth_count = 0
-#             else:
-#                 last_velocity = vel
-#                 index_last_velocity = index
-#         else:
-#             last_velocity = vel
-#             index_last_velocity = index
-
-#     else:
-#         f = open("zeroths.txt", "a")
-#         f.write("zero count" + str(zeroth_count) + " " + str(index)+"\n")
-#         f.close()
-#         zeroth_count +=1
-
 # lista_poczatek_zer = [0, 4141, 5352, 6433, 7307, 8137, 8886]\
 # Y_velocity
 lpn = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
 lkn = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
+
 for index, begin in enumerate(lpn):
-    acce1[begin:lkn[index]] = acce1[begin:lkn[index]] + (abs(acce1[lpn[index+1]]) - abs(acce1[lkn[index]]) )
+    if index !=0:
+        acce1["Y_velocity"][begin-1:lkn[index]] = acce1["Y_velocity"][begin-1:lkn[index]] + (abs(acce1["Y_velocity"][lpn[index]]) - abs(acce1["Y_velocity"][lkn[index-1]]) )
 
+lp_Z = []
 
-# acce1["Y_velocity"][3548:4141] = acce1["Y_velocity"][3548:4141] + (abs(acce1["Y_velocity"][3548]) - abs(acce1["Y_velocity"][2095]))
-# acce1["Y_velocity"][4974:5352] = acce1["Y_velocity"][4974:5352] + (abs(acce1["Y_velocity"][4974]) - abs(acce1["Y_velocity"][3548]))
-# acce1["Y_velocity"][5975:6433] = acce1["Y_velocity"][5975:6433] + (abs(acce1["Y_velocity"][5975]) - abs(acce1["Y_velocity"][5351]))
-# acce1["Y_velocity"][7072:7307] = acce1["Y_velocity"][7072:7307] + (abs(acce1["Y_velocity"][7072]) - abs(acce1["Y_velocity"][6432]))
-# acce1["Y_velocity"][7791:8137] = acce1["Y_velocity"][7791:8137] + (abs(acce1["Y_velocity"][7791]) - abs(acce1["Y_velocity"][7306]))
-# acce1["Y_velocity"][8594:8886] = acce1["Y_velocity"][8594:8886] + (abs(acce1["Y_velocity"][8594]) - abs(acce1["Y_velocity"][8136]))
-# acce1["Y_velocity"][9727:9958] = acce1["Y_velocity"][9727:9958]  + (abs(acce1["Y_velocity"][9727]) - abs(acce1["Y_velocity"][8885]))
+for index, value in acce1["Z_velocity"].iteritems():
+    if value != 0:
+        lp_Z.append(index)
+
+# print(lp_Z)
+lpn_Z = []
+lkn_Z = []
+for index, value in enumerate(lp_Z):
+    if value != lp_Z[-1]:
+        if value+1 != lp_Z[index+1]:
+            lkn_Z.append(value)
+        if value-1 != lp_Z[index-1]:
+            lpn_Z.append(value)
+    else:
+        lkn_Z.append(value)
+
+print(lpn_Z)
+print(lkn_Z)
+
 
 
 
@@ -134,7 +105,6 @@ for index, begin in enumerate(lpn):
 # sns.lineplot(y=acce1["X_filter_abs"], x=acce1["TIME"])
 # sns.lineplot(y=acce1["Y_filter_abs"], x=acce1["TIME"])
 # sns.lineplot(y=acce1["Z_filter_abs"], x=acce1["TIME"])
-
 # print(acce1.head())
 
 plt.figure()
