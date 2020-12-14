@@ -101,7 +101,7 @@ print(lkn_Y)
 for index, begin in enumerate(lpn_Y):
     if index !=0:
         acce1["Y_velocity"][begin-1:lkn_Y[index]] = acce1["Y_velocity"][begin-1:lkn_Y[index]] + (abs(acce1["Y_velocity"][lpn_Y[index]]) - abs(acce1["Y_velocity"][lkn_Y[index-1]]) )
-        acce1["Y_velocity"][:lpn_Y[index]] 
+        acce1["Y_velocity"][lkn_Y[index-1]:lpn_Y[index]]  = acce1["Y_velocity"][lkn_Y[index-1]]
 
     
 
@@ -148,6 +148,9 @@ acce1["Z_velocity"][lpn_Z[5]-1:lkn_Z[5]] = acce1["Z_velocity"][lpn_Z[5]-1:lkn_Z[
 acce1["Z_velocity"][lpn_Z[6]-1:lkn_Z[6]] = acce1["Z_velocity"][lpn_Z[6]-1:lkn_Z[6]] + (abs(acce1["Z_velocity"][lpn_Z[6]]) - abs(acce1["Z_velocity"][lkn_Z[5]]))
 acce1["Z_velocity"][lpn_Z[7]-1:lkn_Z[7]] = acce1["Z_velocity"][lpn_Z[7]-1:lkn_Z[7]] + (abs(acce1["Z_velocity"][lpn_Z[7]]) - abs(acce1["Z_velocity"][lkn_Z[6]]))
 
+for index, begin in enumerate(lpn_Z):
+    if index !=0:
+        acce1["Z_velocity"][lkn_Z[index-1]:lpn_Z[index]]  = acce1["Z_velocity"][lkn_Z[index-1]]
 
 plt.figure()
 plt.title("FILTER ACCELERATION ABSOLUTE VALUES")
@@ -172,8 +175,9 @@ sns.lineplot(y=acce1["Z_velocity"], x=acce1["TIME"], label="Z")
 
 # acce1["X_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["X_velocity"])
 # acce1["Y_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_velocity"])
-
 # acce1["Z_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_velocity"])
+
+
 acce1["X_POSITION"] = integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0)
 acce1["Y_POSITION"]=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0)
 acce1["Z_POSITION"]=integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0)
