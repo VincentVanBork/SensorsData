@@ -16,13 +16,13 @@ acce1["TIME"] = (acce1["TIMESTAMP"] - acce1["TIMESTAMP"].iloc[0])/1000000000
 plt.figure()
 sns.lineplot(
     data=acce1,
-    x="TIME", y="X")
+    x="TIME", y="X", label="X")
 sns.lineplot(
     data=acce1,
-    x="TIME", y="Y")
+    x="TIME", y="Y" ,label="Y")
 sns.lineplot(
     data=acce1,
-    x="TIME", y="Z")
+    x="TIME", y="Z",label="Z")
 
 acce1["SAMPLING_TIME"] = acce1["TIME"].diff()
 # print(acce1.head())
@@ -52,7 +52,9 @@ acce1["Z_filter"] = filtered_signal_Z
 acce1["X_filter_abs"] = acce1["X_filter"].abs()
 acce1["Y_filter_abs"] = acce1["Y_filter"].abs()
 acce1["Z_filter_abs"] = acce1["Z_filter"].abs()
+
 high_numerator_coeffs, high_denominator_coeffs = signal.butter(order, normalized_cutoff_freq,btype="highpass")
+
 acce1["X_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["X_filter_abs"])
 acce1["Y_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_filter_abs"])
 acce1["Z_filter_abs"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_filter_abs"])
@@ -66,9 +68,9 @@ acce1.loc[acce1["X_filter_abs"] < 0.0015, 'X_velocity'] = 0
 acce1.loc[acce1["Y_filter_abs"] < 0.0015, 'Y_velocity'] = 0
 acce1.loc[acce1["Z_filter_abs"] < 0.0015, 'Z_velocity'] = 0
 
-print(len(acce1.loc[acce1["X_velocity"] == 0]))
+# print(len(acce1.loc[acce1["X_velocity"] == 0]))
 
-# lista_poczatek_zer = [0, 4141, 5352, 6433, 7307, 8137, 8886]\
+
 # Y_velocity
 lpn_Y = [1867, 3548, 4974, 5975, 7072, 7791, 8594, 9727]
 lkn_Y = [2095, 4140, 5351, 6432, 7306, 8136, 8885, 9957]
@@ -78,7 +80,6 @@ for index, begin in enumerate(lpn_Y):
         acce1["Y_velocity"][begin-1:lkn_Y[index]] = acce1["Y_velocity"][begin-1:lkn_Y[index]] + (abs(acce1["Y_velocity"][lpn_Y[index]]) - abs(acce1["Y_velocity"][lkn_Y[index-1]]) )
 
 lp_Z = []
-
 for index, value in acce1["Z_velocity"].iteritems():
     if value != 0:
         lp_Z.append(index)
@@ -98,28 +99,55 @@ for index, value in enumerate(lp_Z):
 print(lpn_Z)
 print(lkn_Z)
 
+acce1["Z_velocity"][lpn_Z[1]-1:lkn_Z[1]] = acce1["Z_velocity"][lpn_Z[1]-1:lkn_Z[1]] - (acce1["Z_velocity"][lpn_Z[1]] - acce1["Z_velocity"][lkn_Z[0]])
+acce1["Z_velocity"][lpn_Z[2]-1:lkn_Z[2]] = acce1["Z_velocity"][lpn_Z[2]-1:lkn_Z[2]] - (acce1["Z_velocity"][lpn_Z[1]] - acce1["Z_velocity"][lkn_Z[0]])
+for index, value in acce1["Z_velocity"][lpn_Z[2]-1:lkn_Z[2]].iteritems():
+    if value > 0:
+        acce1["Z_velocity"][index] = acce1["Z_velocity"][index] - ( acce1["Z_velocity"][lkn_Z[1]] - acce1["Z_velocity"][lpn_Z[2]])
+    else:
+        acce1["Z_velocity"][index] = acce1["Z_velocity"][index] + ( acce1["Z_velocity"][lkn_Z[1]] - acce1["Z_velocity"][lpn_Z[2]])
+
+acce1["Z_velocity"][lpn_Z[3]-1:lkn_Z[3]] = acce1["Z_velocity"][lpn_Z[3]-1:lkn_Z[3]] + (abs(acce1["Z_velocity"][lpn_Z[3]]) - abs(acce1["Z_velocity"][lkn_Z[2]]))
+
+acce1["Z_velocity"][lpn_Z[4]-1:lkn_Z[4]] = acce1["Z_velocity"][lpn_Z[4]-1:lkn_Z[4]] + (abs(acce1["Z_velocity"][lpn_Z[4]]) - abs(acce1["Z_velocity"][lkn_Z[3]]))
+
+acce1["Z_velocity"][lpn_Z[4]-1:lkn_Z[4]] = acce1["Z_velocity"][lpn_Z[4]-1:lkn_Z[4]] + (abs(acce1["Z_velocity"][lpn_Z[4]]) - abs(acce1["Z_velocity"][lkn_Z[3]]))
+
+acce1["Z_velocity"][lpn_Z[5]-1:lkn_Z[5]] = acce1["Z_velocity"][lpn_Z[5]-1:lkn_Z[5]] + (abs(acce1["Z_velocity"][lpn_Z[5]]) - abs(acce1["Z_velocity"][lkn_Z[4]]))
+
+acce1["Z_velocity"][lpn_Z[6]-1:lkn_Z[6]] = acce1["Z_velocity"][lpn_Z[6]-1:lkn_Z[6]] + (abs(acce1["Z_velocity"][lpn_Z[6]]) - abs(acce1["Z_velocity"][lkn_Z[5]]))
+acce1["Z_velocity"][lpn_Z[7]-1:lkn_Z[7]] = acce1["Z_velocity"][lpn_Z[7]-1:lkn_Z[7]] + (abs(acce1["Z_velocity"][lpn_Z[7]]) - abs(acce1["Z_velocity"][lkn_Z[6]]))
 
 
+plt.figure()
+plt.title("FILTER ACCELERATION ABSOLUTE VALUES")
+sns.lineplot(y=acce1["X_filter_abs"], x=acce1["TIME"],label="X")
+sns.lineplot(y=acce1["Y_filter_abs"], x=acce1["TIME"],label="Y")
+sns.lineplot(y=acce1["Z_filter_abs"], x=acce1["TIME"],label="Z")
 
-# plt.figure()
-# sns.lineplot(y=acce1["X_filter_abs"], x=acce1["TIME"])
-# sns.lineplot(y=acce1["Y_filter_abs"], x=acce1["TIME"])
-# sns.lineplot(y=acce1["Z_filter_abs"], x=acce1["TIME"])
 # print(acce1.head())
 
 plt.figure()
-sns.lineplot(y=filtered_signal_X, x=acce1["TIME"])
-sns.lineplot(y=filtered_signal_Y, x=acce1["TIME"])
-sns.lineplot(y=filtered_signal_Z, x=acce1["TIME"])
+plt.title("FILTERED ACCELERATION X,Y,Z")
+sns.lineplot(y=filtered_signal_X, x=acce1["TIME"] , label="X")
+sns.lineplot(y=filtered_signal_Y, x=acce1["TIME"], label="Y")
+sns.lineplot(y=filtered_signal_Z, x=acce1["TIME"], label="Z")
 
 
 plt.figure()
-sns.lineplot(y=acce1["X_velocity"], x=acce1["TIME"])
-sns.lineplot(y=acce1["Y_velocity"], x=acce1["TIME"])
-sns.lineplot(y=acce1["Z_velocity"], x=acce1["TIME"])
+plt.title("VELOCITY X,Y,Z")
+sns.lineplot(y=acce1["X_velocity"], x=acce1["TIME"], label="X")
+sns.lineplot(y=acce1["Y_velocity"], x=acce1["TIME"], label="Y")
+sns.lineplot(y=acce1["Z_velocity"], x=acce1["TIME"], label="Z")
+
+# acce1["X_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["X_velocity"])
+# acce1["Y_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Y_velocity"])
+
+# acce1["Z_velocity"] = signal.lfilter(high_numerator_coeffs, high_denominator_coeffs, acce1["Z_velocity"])
 
 plt.figure()
-sns.lineplot(y=integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"])
-sns.lineplot(y=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"])
-sns.lineplot(y=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"],initial=0), x=acce1["TIME"])
+plt.title("POSITION X,Y,Z")
+sns.lineplot(y=integrate.cumtrapz(acce1["X_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"], label="X")
+sns.lineplot(y=integrate.cumtrapz(acce1["Y_velocity"],x=acce1["TIME"], initial=0), x=acce1["TIME"], label="Y")
+sns.lineplot(y=integrate.cumtrapz(acce1["Z_velocity"],x=acce1["TIME"],initial=0), x=acce1["TIME"],label="Z")
 plt.show()
