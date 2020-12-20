@@ -10,12 +10,26 @@ from scipy import integrate
 from graph_func import *
 
 sns.set_theme()
-data = import_data("acce1.csv")
+data = import_data("acce2.csv")
+print(data.head())
+filter_acceleration(data, div_freq=300)
 
+# x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 6, mode = 'zero')
+# y_wave=wavelets(data = data["Y"], wavelet = 'haar', uselevels = 6, mode = 'zero')
+# z_wave=wavelets(data = data["Z"], wavelet = 'haar', uselevels = 6, mode = 'zero')
+# data["X"] = x_wave[:len(data["X"])]
+# data["Y"] = y_wave[:len(data["Y"])]
+# data["Z"] = z_wave[:len(data["Z"])]
 
-filter_acceleration(data, div_freq=450)
+# plt.figure()
+# plt.title("wavelets")
+# sns.lineplot(y=data["X"], x=range(len(data["X"])))
+# sns.lineplot(y=x_wave,  x=range(len(x_wave)))
 
 calculate_velocity(data)
+data["X_velocity"] = regres(data["X_velocity"],data["TIME"] , 400, 500)
+data["Y_velocity"] = regres(data["X_velocity"],data["TIME"] ,400, 500)
+data["Z_velocity"] = regres(data["X_velocity"],data["TIME"] , 400, 500)
 
 zero_velocity(data)
 x,y,z = all_vel_indicies(data)
@@ -28,8 +42,9 @@ set_equal_velocity(data, x0, xf, "X_velocity")
 set_equal_velocity(data, y0, yf, "Y_velocity")
 set_equal_velocity(data, z0, zf, "Z_velocity")
 
+
 calculate_position(data)
 
-create_graphs(["raw_vs_filter", "position", "velocity"], data)
+create_graphs(["raw", "raw_vs_filter", "position", "velocity"], data)
 
 plt.show()

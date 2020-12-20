@@ -26,17 +26,20 @@ def create_graphs(names, data):
         plt.figure()
         plt.title("RAW DATA vs filtered")
         sns.lineplot(y=data["X"]/data["X"].abs().max(), x=data["TIME"], label="X")
-        sns.lineplot(y=data["X_filter"]/data["X_filter"].abs().max(), x=data["TIME"], label="X_FILTERED")
+        if "X_filter" in data.columns:
+            sns.lineplot(y=data["X_filter"]/data["X_filter"].abs().max(), x=data["TIME"], label="X_FILTERED")
 
         plt.figure()
         plt.title("RAW DATA vs filtered")
         sns.lineplot(y=data["Y"]/data["Y"].abs().max(), x=data["TIME"], label="Y")
-        sns.lineplot(y=data["Y_filter"]/data["Y_filter"].abs().max(), x=data["TIME"], label="Y_FILTERED")
+        if "Y_filter" in data.columns:
+            sns.lineplot(y=data["Y_filter"]/data["Y_filter"].abs().max(), x=data["TIME"], label="Y_FILTERED")
 
         plt.figure()
         plt.title("RAW DATA vs filtered")
         sns.lineplot(y=data["Z"]/data["Z"].abs().max(), x=data["TIME"], label="Z")
-        sns.lineplot(y=data["Z_filter"]/data["Z_filter"].abs().max(), x=data["TIME"], label="Z_FILTERED")
+        if "Z_filter" in data.columns:
+            sns.lineplot(y=data["Z_filter"]/data["Z_filter"].abs().max(), x=data["TIME"], label="Z_FILTERED")
 
     if "position" in names:
         # print(data.head())
@@ -54,3 +57,12 @@ def create_graphs(names, data):
         sns.lineplot(y=data["Y_velocity"], x=data["TIME"], label="Y")
         sns.lineplot(y=data["Z_velocity"], x=data["TIME"], label="Z")
         # print(data.head())
+
+    if "wavelets" in names:
+        plt.figure()
+        plt.title("wavelets")
+
+
+        sns.lineplot(y=data["X"], x=data["TIME"])
+
+

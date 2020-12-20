@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 from scipy import signal
 import numpy as np
 from scipy import integrate
-
+from scipy.stats import linregress
+import pywt
 
 def import_data(name):
     colnames=[ 'X', 'Y', 'Z', "ACCURACY", "TIMESTAMP"]
     acce = pd.read_csv(f"./data/{name}", names=colnames)
     acce["TIME"] = (acce["TIMESTAMP"] - acce["TIMESTAMP"].iloc[0])/1000000000
-
+    acce = acce[acce["TIME"]>0]
     return acce
 
 
@@ -40,9 +41,14 @@ def filter_acceleration(df, btype="lowpass", order=5, div_freq=1400):
 
 
 def calculate_velocity(df):
-    df["X_velocity"] = integrate.cumtrapz(df["X_filter"], x=df["TIME"], initial=0)
-    df["Y_velocity"] = integrate.cumtrapz(df["Y_filter"], x=df["TIME"], initial=0)
-    df["Z_velocity"] = integrate.cumtrapz(df["Z_filter"], x=df["TIME"], initial=0)
+    try:
+        df["X_velocity"] = integrate.cumtrapz(df["X_filter"], x=df["TIME"], initial=0)
+        df["Y_velocity"] = integrate.cumtrapz(df["Y_filter"], x=df["TIME"], initial=0)
+        df["Z_velocity"] = integrate.cumtrapz(df["Z_filter"], x=df["TIME"], initial=0)
+    except KeyError:
+        df["X_velocity"] = integrate.cumtrapz(df["X"], x=df["TIME"], initial=0)
+        df["Y_velocity"] = integrate.cumtrapz(df["Y"], x=df["TIME"], initial=0)
+        df["Z_velocity"] = integrate.cumtrapz(df["Z"], x=df["TIME"], initial=0)
 
 
 def calculate_position(df):
@@ -52,9 +58,14 @@ def calculate_position(df):
 
 
 def zero_velocity(df, threshold=0.0015):
-    df.loc[df["X_filter_abs"] < threshold, 'X_velocity'] = 0
-    df.loc[df["Y_filter_abs"] < threshold, 'Y_velocity'] = 0
-    df.loc[df["Z_filter_abs"] < threshold, 'Z_velocity'] = 0
+    try:
+        df.loc[df["X_filter_abs"] < threshold, 'X_velocity'] = 0
+        df.loc[df["Y_filter_abs"] < threshold, 'Y_velocity'] = 0
+        df.loc[df["Z_filter_abs"] < threshold, 'Z_velocity'] = 0
+    except KeyError:
+        df.loc[df["X"].abs() < threshold, 'X_velocity'] = 0
+        df.loc[df["Y"].abs() < threshold, 'Y_velocity'] = 0
+        df.loc[df["Z"].abs() < threshold, 'Z_velocity'] = 0
 
 
 def all_vel_indicies(df):
@@ -108,3 +119,29 @@ def set_equal_velocity(df, begin_range_vel, end_range_vel, velocity_name):
         if index !=0:
             df[velocity_name][begin-1:end_range_vel[index]]= df[velocity_name][begin-1:end_range_vel[index]].apply(lambda x: x + drift_difference if x < 0 else x - drift_difference)
             df[velocity_name][end_range_vel[index-1]:begin_range_vel[index]]  = df[velocity_name][end_range_vel[index-1]]
+
+
+def wavelets(data, wavelet, uselevels, mode):
+    print(data.shape[0])
+    levels = (np.floor(np.log2(data.shape[0]))).astype(int)
+    print("LEVELS: ",levels)
+    omit = levels - uselevels
+
+    coeffs = pywt.wavedec(data, wavelet, level=levels)
+
+    A = pywt.waverec(coeffs[:-omit] + [None] * omit, wavelet, mode=mode)
+    print(A.shape)
+    return A
+
+
+def regres(data, time, start, end):
+    l1, l2 = start,end
+
+    R = linregress(time[l1:l2], data[l1:l2])
+
+    inter = -R[1]/R[0]
+    start = np.where(time> inter)[0][0]
+
+    transformed = data[start:] - (R[0]*time[start:] + R[1])
+    data = np.concatenate((data[:start], transformed))
+    return data

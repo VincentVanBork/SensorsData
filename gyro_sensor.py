@@ -12,9 +12,9 @@ colnames=[ 'X', 'Y', 'Z',"ANGLE","USELESS", "ACCURACY", "TIMESTAMP"]
 gyro1 = pd.read_csv("./data/gyro1.csv", names=colnames)
 gyro1["TIME"] = (gyro1["TIMESTAMP"] - gyro1["TIMESTAMP"].iloc[0])/1000000000
 plt.figure()
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y="X")
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y="Y")
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y="Z")
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y="X", label="X")
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y="Y", label="Y")
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y="Z", label="Z")
 gyro1["SAMPLING_TIME"] = gyro1["TIME"].diff()
 
 sampling_freq = 1 / gyro1["SAMPLING_TIME"].mean()
@@ -34,8 +34,8 @@ filtered_signal_Y = signal.lfilter(numerator_coeffs, denominator_coeffs, gyro1["
 filtered_signal_Z = signal.lfilter(numerator_coeffs, denominator_coeffs, gyro1["Z"])
 
 plt.figure()
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_X)
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_Y)
-sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_Z)
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_X, label="X")
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_Y, label="Y")
+sns.lineplot(data=gyro1, x=gyro1["TIME"], y=filtered_signal_Z, label="Z")
 
 plt.show()
