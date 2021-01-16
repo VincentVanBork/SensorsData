@@ -1,4 +1,4 @@
-from compute_func import *
+from compute_func import set_equal_velocity, import_data, regres, all_vel_indicies, find_vel_borders
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -7,8 +7,7 @@ import numpy as np
 
 from scipy import integrate
 
-from graph_func import *
-
+from graph_func import filter_acceleration, calculate_position, calculate_velocity, zero_velocity, create_graphs
 sns.set_theme()
 data = import_data("acce2.csv")
 print(data.head())
@@ -27,12 +26,12 @@ filter_acceleration(data, div_freq=300)
 # sns.lineplot(y=x_wave,  x=range(len(x_wave)))
 
 calculate_velocity(data)
-data["X_velocity"] = regres(data["X_velocity"],data["TIME"] , 400, 500)
-data["Y_velocity"] = regres(data["X_velocity"],data["TIME"] ,400, 500)
-data["Z_velocity"] = regres(data["X_velocity"],data["TIME"] , 400, 500)
+data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
+data["Y_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
+data["Z_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
 
 zero_velocity(data)
-x,y,z = all_vel_indicies(data)
+x, y, z = all_vel_indicies(data)
 
 x0, xf = find_vel_borders(x)
 y0, yf = find_vel_borders(y)

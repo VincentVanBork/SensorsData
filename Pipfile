@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+numpy = "*"
+seaborn = "*"
+scipy = "*"
+matplotlib = "*"
+pywavelets = "*"
+pep8 = "*"
+
+[dev-packages]
+flake8 = "*"
+pylint = "*"
+autopep8 = "*"
+pylama = "*"
+
+[requires]
+python_version = "3.9"
