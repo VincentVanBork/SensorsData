@@ -6,14 +6,15 @@ from scipy import signal
 import numpy as np
 
 from scipy import integrate
+from scipy.spatial.transform import Rotation as R
 
 from graph_func import filter_acceleration, calculate_position, calculate_velocity, zero_velocity, create_graphs
+from gyro_sensor import gyro1
 
 sns.set_theme()
-data = import_data("acce19.csv")
-print(data.head())
-filter_acceleration(data, div_freq=40)
-
+data = import_data("acce22.csv")
+# print(data.head())
+filter_acceleration(data, div_freq=20)
 # x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 3, mode = 'zero')
 # y_wave=wavelets(data = data["Y"], wavelet = 'haar', uselevels = 3, mode = 'zero')
 # z_wave=wavelets(data = data["Z"], wavelet = 'haar', uselevels = 3, mode = 'zero')
@@ -26,8 +27,24 @@ filter_acceleration(data, div_freq=40)
 # sns.lineplot(y=data["X"], x=range(len(data["X"])))
 # sns.lineplot(y=x_wave,  x=range(len(x_wave)))
 
+acce_vectors = data[["X_filter","Y_filter","Z_filter"]].to_numpy()
+rotation_vectors = gyro1[["X","Y","Z","ANGLE"]].to_numpy()
+rotation = R.from_quat(rotation_vectors)
+rotated_vectors = rotation.apply(acce_vectors)
+rotated_acce = pd.DataFrame(rotated_vectors, columns=["X", "Y", "Z"])
+
+plt.figure()
+sns.lineplot(y=data["Y_filter"], x=data["TIME"], label="Y_NORMAL")
+sns.lineplot(y=rotated_acce["Y"], x=data["TIME"], label="Y_ROTATED")
+
+
+data["X_filter"] = rotated_acce["X"]
+data["Y_filter"] = rotated_acce["Y"]
+data["Z_filter"] = rotated_acce["Z"]
+
+
+
 calculate_velocity(data)
-print(len(data))
 
 # data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 100, len(data)-1)
 # data["Y_velocity"] = regres(data["Y_velocity"], data["TIME"], 100, len(data)-1)

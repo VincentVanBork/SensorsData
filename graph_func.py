@@ -62,6 +62,7 @@ def create_graphs(names, data):
         plt.figure()
         plt.title("wavelets")
 
+    
 
         sns.lineplot(y=data["X"], x=data["TIME"])
 
