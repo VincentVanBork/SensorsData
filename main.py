@@ -10,13 +10,13 @@ from scipy import integrate
 from graph_func import filter_acceleration, calculate_position, calculate_velocity, zero_velocity, create_graphs
 
 sns.set_theme()
-data = import_data("acce2.csv")
+data = import_data("acce19.csv")
 print(data.head())
-filter_acceleration(data, div_freq=300)
+filter_acceleration(data, div_freq=40)
 
-# x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 6, mode = 'zero')
-# y_wave=wavelets(data = data["Y"], wavelet = 'haar', uselevels = 6, mode = 'zero')
-# z_wave=wavelets(data = data["Z"], wavelet = 'haar', uselevels = 6, mode = 'zero')
+# x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 3, mode = 'zero')
+# y_wave=wavelets(data = data["Y"], wavelet = 'haar', uselevels = 3, mode = 'zero')
+# z_wave=wavelets(data = data["Z"], wavelet = 'haar', uselevels = 3, mode = 'zero')
 # data["X"] = x_wave[:len(data["X"])]
 # data["Y"] = y_wave[:len(data["Y"])]
 # data["Z"] = z_wave[:len(data["Z"])]
@@ -28,10 +28,6 @@ filter_acceleration(data, div_freq=300)
 
 calculate_velocity(data)
 print(len(data))
-
-data["X_velocity"]= signal.detrend(data["X_velocity"])
-data["Y_velocity"] = signal.detrend(data["Y_velocity"])
-data["Z_velocity"] = signal.detrend(data["Z_velocity"])
 
 # data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 100, len(data)-1)
 # data["Y_velocity"] = regres(data["Y_velocity"], data["TIME"], 100, len(data)-1)
@@ -48,13 +44,21 @@ data["Z_velocity"] = signal.detrend(data["Z_velocity"])
 # set_equal_velocity(data, y0, yf, "Y_velocity")
 # set_equal_velocity(data, z0, zf, "Z_velocity")
 
+data["X_velocity"]= signal.detrend(data["X_velocity"], type='constant')
+data["Y_velocity"] = signal.detrend(data["Y_velocity"], type='constant')
+data["Z_velocity"] = signal.detrend(data["Z_velocity"], type='constant')
 
 calculate_position(data)
 
 create_graphs(["raw", "raw_vs_filter", "position", "velocity"], data)
 # create_graphs([ "position","velocity"], data)
 
-plt.figure()
-plt.plot(data["X_position"],data["Y_position"])
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(data["X_position"],data["Y_position"], data["Z_position"])
+
+fig2 = plt.figure()
+ax2 = fig2.add_subplot()
+ax2.plot(data["X_position"],data["Y_position"])
 
 plt.show()

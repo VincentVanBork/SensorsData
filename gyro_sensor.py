@@ -9,8 +9,9 @@ sns.set_theme()
 #x,y,z vectors
 colnames=[ 'X', 'Y', 'Z',"ANGLE","USELESS", "ACCURACY", "TIMESTAMP"]
 
-gyro1 = pd.read_csv("./data/gyro1.csv", names=colnames)
+gyro1 = pd.read_csv("./data/gyro15.csv", names=colnames)
 gyro1["TIME"] = (gyro1["TIMESTAMP"] - gyro1["TIMESTAMP"].iloc[0])/1000000000
+gyro1 = gyro1[gyro1["TIME"] > 0]
 plt.figure()
 sns.lineplot(data=gyro1, x=gyro1["TIME"], y="X", label="X")
 sns.lineplot(data=gyro1, x=gyro1["TIME"], y="Y", label="Y")
