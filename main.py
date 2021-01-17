@@ -1,4 +1,4 @@
-from compute_func import set_equal_velocity, import_data, regres, all_vel_indicies, find_vel_borders
+from compute_func import set_equal_velocity, import_data, regres, all_vel_indicies, find_vel_borders, wavelets
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -8,6 +8,7 @@ import numpy as np
 from scipy import integrate
 
 from graph_func import filter_acceleration, calculate_position, calculate_velocity, zero_velocity, create_graphs
+
 sns.set_theme()
 data = import_data("acce2.csv")
 print(data.head())
@@ -26,24 +27,34 @@ filter_acceleration(data, div_freq=300)
 # sns.lineplot(y=x_wave,  x=range(len(x_wave)))
 
 calculate_velocity(data)
-data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
-data["Y_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
-data["Z_velocity"] = regres(data["X_velocity"], data["TIME"], 400, 500)
+print(len(data))
 
-zero_velocity(data)
-x, y, z = all_vel_indicies(data)
+data["X_velocity"]= signal.detrend(data["X_velocity"])
+data["Y_velocity"] = signal.detrend(data["Y_velocity"])
+data["Z_velocity"] = signal.detrend(data["Z_velocity"])
 
-x0, xf = find_vel_borders(x)
-y0, yf = find_vel_borders(y)
-z0, zf = find_vel_borders(z)
+# data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 100, len(data)-1)
+# data["Y_velocity"] = regres(data["Y_velocity"], data["TIME"], 100, len(data)-1)
+# data["Z_velocity"] = regres(data["Z_velocity"], data["TIME"], 100, len(data)-1)
 
-set_equal_velocity(data, x0, xf, "X_velocity")
-set_equal_velocity(data, y0, yf, "Y_velocity")
-set_equal_velocity(data, z0, zf, "Z_velocity")
+# zero_velocity(data)
+# x, y, z = all_vel_indicies(data)
+
+# x0, xf = find_vel_borders(x)
+# y0, yf = find_vel_borders(y)
+# z0, zf = find_vel_borders(z)
+
+# set_equal_velocity(data, x0, xf, "X_velocity")
+# set_equal_velocity(data, y0, yf, "Y_velocity")
+# set_equal_velocity(data, z0, zf, "Z_velocity")
 
 
 calculate_position(data)
 
 create_graphs(["raw", "raw_vs_filter", "position", "velocity"], data)
+# create_graphs([ "position","velocity"], data)
+
+plt.figure()
+plt.plot(data["X_position"],data["Y_position"])
 
 plt.show()

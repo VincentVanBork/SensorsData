@@ -135,7 +135,7 @@ def set_equal_velocity(df, begin_range_vel, end_range_vel, velocity_name):
         if index != 0:
             df[velocity_name][begin-1:end_range_vel[index]] = df[velocity_name][begin-1:end_range_vel[index]
                                                                                 ].apply(lambda x: x + drift_difference if x < 0 else x - drift_difference)
-            df[velocity_name][end_range_vel[index-1]:begin_range_vel[index]
+            df[velocity_name][end_range_vel[index-1]-1:begin_range_vel[index]
                               ] = df[velocity_name][end_range_vel[index-1]]
 
 
