@@ -12,7 +12,7 @@ from graph_func import filter_acceleration, calculate_position, calculate_veloci
 from gyro_sensor import gyro1
 
 sns.set_theme()
-data = import_data("acce22.csv")
+data = import_data("acce21.csv")
 # print(data.head())
 filter_acceleration(data, div_freq=20)
 # x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 3, mode = 'zero')
