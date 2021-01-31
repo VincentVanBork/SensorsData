@@ -15,6 +15,9 @@ sns.set_theme()
 data = import_data("acce20.csv")
 # print(data.head())
 # filter_acceleration(data, div_freq=20)
+
+#wave becomes more "square" but this doesnt change outcome of velocity.
+
 # x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 3, mode = 'zero')
 # y_wave=wavelets(data = data["Y"], wavelet = 'haar', uselevels = 3, mode = 'zero')
 # z_wave=wavelets(data = data["Z"], wavelet = 'haar', uselevels = 3, mode = 'zero')
@@ -48,10 +51,12 @@ data["Z"] = rotated_acce["Z"]
 calculate_velocity(data)
 
 
+#we dont use regres cause we have to pick range here 100 , until end but can be 200 400 or sth
 # data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 100, len(data)-1)
 # data["Y_velocity"] = regres(data["Y_velocity"], data["TIME"], 100, len(data)-1)
 # data["Z_velocity"] = regres(data["Z_velocity"], data["TIME"], 100, len(data)-1)
 
+# needs repeating motion to function properly and hard to calculate ranges when values differ much - are negative or positive closely
 # zero_velocity(data)
 # x, y, z = all_vel_indicies(data)
 
