@@ -1,4 +1,4 @@
-from compute_func import set_equal_velocity, import_data, regres, all_vel_indicies, find_vel_borders, wavelets
+from compute_func import set_equal_velocity, import_data, regres, all_vel_indicies, find_vel_borders, wavelets, PolyArea
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -12,7 +12,7 @@ from graph_func import filter_acceleration, calculate_position, calculate_veloci
 from gyro_sensor import gyro1
 
 sns.set_theme()
-data = import_data("acce21.csv")
+data = import_data("acce20.csv")
 # print(data.head())
 # filter_acceleration(data, div_freq=20)
 # x_wave=wavelets(data = data["X"], wavelet = 'haar', uselevels = 3, mode = 'zero')
@@ -27,6 +27,7 @@ data = import_data("acce21.csv")
 # sns.lineplot(y=data["X"], x=range(len(data["X"])))
 # sns.lineplot(y=x_wave,  x=range(len(x_wave)))
 
+#rotate vector by some angle described by quaternion
 acce_vectors = data[["X","Y","Z"]].to_numpy()
 rotation_vectors = gyro1[["X","Y","Z","ANGLE"]].to_numpy()
 rotation = R.from_quat(rotation_vectors)
@@ -41,11 +42,10 @@ data["X"] = rotated_acce["X"]
 data["Y"] = rotated_acce["Y"]
 data["Z"] = rotated_acce["Z"]
 
-filter_acceleration(data, div_freq=20)
+# filter_acceleration(data, div_freq=30)
 
 
 calculate_velocity(data)
-
 
 
 # data["X_velocity"] = regres(data["X_velocity"], data["TIME"], 100, len(data)-1)
@@ -66,11 +66,13 @@ calculate_velocity(data)
 data = data.dropna()
 
 # data["X_velocity"]= signal.detrend(data["X_velocity"])
-data["Y_velocity"] = signal.detrend(data["Y_velocity"])
+# data["Y_velocity"] = signal.detrend(data["Y_velocity"])
 # data["Z_velocity"] = signal.detrend(data["Z_velocity"])
 
 
 calculate_position(data)
+print("ARE OF THE MODEL", np.pi * 37 * 37)
+print(PolyArea(data["X_position"]*120, data["Y_position"]*120))
 
 create_graphs(["raw", "raw_vs_filter", "position", "velocity"], data)
 # create_graphs([ "position","velocity"], data)
@@ -84,3 +86,5 @@ ax2 = fig2.add_subplot()
 ax2.plot(data["X_position"],data["Y_position"])
 
 plt.show()
+
+

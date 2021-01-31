@@ -163,3 +163,7 @@ def regres(data, time, start, end):
     transformed = data[start:] - (R[0]*time[start:] + R[1])
     data = np.concatenate((data[:start], transformed))
     return data
+
+
+def PolyArea(x,y):
+    return 0.5*np.abs(np.dot(x,np.roll(y,1))-np.dot(y,np.roll(x,1)))

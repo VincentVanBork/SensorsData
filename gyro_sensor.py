@@ -9,7 +9,7 @@ sns.set_theme()
 #x,y,z vectors
 colnames=[ 'X', 'Y', 'Z',"ANGLE","USELESS", "ACCURACY", "TIMESTAMP"]
 
-gyro1 = pd.read_csv("./data/gyro21.csv", names=colnames)
+gyro1 = pd.read_csv("./data/gyro20.csv", names=colnames)
 gyro1["TIME"] = (gyro1["TIMESTAMP"] - gyro1["TIMESTAMP"].iloc[0])/1000000000
 gyro1 = gyro1[gyro1["TIME"] > 0]
 # print(gyro1["TIMESTAMP"])
